@@ -3,18 +3,30 @@
 #include "board.h"
 #include "remoteproc.h"
 
-#define FW_RSC_NUM 4
+#define FW_RSC_NUM 6
 struct resource_table {
 	uint32_t version;
 	uint32_t num;
 	uint32_t reserved[2];
 	uint32_t offset[FW_RSC_NUM]; /* Should match 'num' in actual definition */
+
 	struct fw_rsc_hdr text_hdr;
 	struct fw_rsc_carveout text_carveout;
+
 	struct fw_rsc_hdr data_hdr;
 	struct fw_rsc_carveout data_carveout;
+
+	/* trace memory resource */
+	struct fw_rsc_hdr trace_data_hdr;
+	struct fw_rsc_carveout trace_data_carveout;
+
+	/* trace resource */
+	struct fw_rsc_hdr trace_hdr;
+	struct fw_rsc_trace trace;
+
 	struct fw_rsc_hdr l4_cfg_hdr;
 	struct fw_rsc_devmem l4_cfg_devmem;
+
 	struct fw_rsc_hdr l4_per_hdr;
 	struct fw_rsc_devmem l4_per_devmem;
 
@@ -27,12 +39,16 @@ struct resource_table resources = {
 	.reserved = {
 		0, 0
 	},
+
 	.offset = {
 		offsetof(struct resource_table, text_hdr),
 		offsetof(struct resource_table, data_hdr),
+		offsetof(struct resource_table, trace_data_hdr),
+		offsetof(struct resource_table, trace_hdr),
 		offsetof(struct resource_table, l4_cfg_hdr),
 		offsetof(struct resource_table, l4_per_hdr),
 	},
+
 	.text_hdr = {
 		RSC_CARVEOUT
 	},
@@ -44,6 +60,7 @@ struct resource_table resources = {
 		0x0,
 		IPU_MEM_TEXT_NAME
 	},
+
 	.data_hdr = {
 		RSC_CARVEOUT
 	},
@@ -55,6 +72,31 @@ struct resource_table resources = {
 		0x0,
 		IPU_MEM_DATA_NAME
 	},
+
+	/* trace memory ressource */
+	.trace_data_hdr = {
+		RSC_CARVEOUT
+	},
+	.trace_data_carveout = {
+		IPU_MEM_TRACE_BASE,
+		0x0,
+		IPU_MEM_TRACE_SIZE,
+		0x0,
+		0x0,
+		IPU_MEM_TRACE_NAME
+	},
+
+	/* trace ressource */
+	.trace_hdr = {
+		RSC_TRACE
+	},
+	.trace = {
+		IPU_MEM_TRACE_BASE,
+		IPU_MEM_TRACE_SIZE,
+		0x0, /* reserved */
+		IPU_MEM_TRACE_NAME
+	},
+
 	.l4_cfg_hdr = {
 		RSC_DEVMEM
 	},
@@ -66,6 +108,7 @@ struct resource_table resources = {
 		0x0,
 		IPU_PERIPHERAL_L4CFG_NAME
 	},
+
 	.l4_per_hdr = {
 		RSC_DEVMEM
 	},

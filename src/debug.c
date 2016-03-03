@@ -1,3 +1,4 @@
+#include <string.h>
 #include "board.h"
 #include "gpio.h"
 #include "led.h"
@@ -26,4 +27,22 @@ void debug_blink(int led)
 		led_toggle(led);
 		sleep(0);
 	}
+}
+
+char *trace_buf = (char *)IPU_MEM_TRACE_BASE;
+void debug_trace(const char *const msg)
+{
+	unsigned int len;
+
+	len = strlen(msg);
+
+	/* simply reset the trace buffer position when the size exceed the
+	 * buffer size, a more sophisticated solution like log rotatation could
+	 * be imagine. */
+	if (((unsigned int)trace_buf + len) > (IPU_MEM_TRACE_BASE +
+			IPU_MEM_TRACE_SIZE))
+		trace_buf = (char *)IPU_MEM_TRACE_BASE;
+
+	strncpy(trace_buf, msg, len);
+	trace_buf += len;
 }

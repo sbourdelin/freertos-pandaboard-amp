@@ -35,6 +35,13 @@ struct fw_rsc_devmem {
 	uint8_t name[32];
 } __attribute__ ((packed));
 
+struct fw_rsc_trace {
+	uint32_t da;
+	uint32_t len;
+	uint32_t reserved;
+	uint8_t name[32];
+} __attribute__ ((packed));
+
 enum fw_resource_type {
 	RSC_CARVEOUT = 0,
 	RSC_DEVMEM = 1,

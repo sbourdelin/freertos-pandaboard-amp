@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include "board.h"
 #include "debug.h"
 #include "FreeRTOSConfig.h"
@@ -19,6 +18,8 @@ static void heartbeat(void *Parameters)
 
 int main()
 {
+	debug_trace("hello from freertos\n");
+
 	/* enable the GPIO2 irq in the NVIC */
 	nvic_irqenable(NVIC_GPIO2_MPU_IRQ);
 
